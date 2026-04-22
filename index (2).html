@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Absensi WFH</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1e3a8a;
+    --primary-dark: #1e2f6b;
+    --primary-light: #3b5fc0;
+    --accent: #f59e0b;
+    --success: #10b981;
+    --error: #ef4444;
+    --bg: #f0f4ff;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --shadow: 0 4px 24px rgba(30,58,138,0.10);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 0 0 40px;
+  }
+
+  .app-wrapper {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---- HEADER ---- */
+  .header {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, var(--primary-light) 100%);
+    padding: 32px 24px 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    top: -60px; right: -60px;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    bottom: -30px; left: 20px;
+  }
+  .header h1 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 1;
+  }
+  .header p {
+    font-size: 11px;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---- TAB ---- */
+  .tab-bar {
+    background: #fff;
+    display: flex;
+    border-radius: 12px;
+    margin: 16px 20px;
+    padding: 4px;
+    box-shadow: var(--shadow);
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 11px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .tab-btn.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(30,58,138,0.25);
+  }
+
+  /* ---- CARD ---- */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    margin: 0 20px 16px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+
+  /* ---- SESSION BADGE ---- */
+  .session-badge {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 1.5px solid #bfdbfe;
+    border-radius: 12px;
+    padding: 14px 20px;
+    text-align: center;
+  }
+  .session-badge .label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .session-badge .value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-top: 2px;
+  }
+  .session-badge.inactive {
+    background: #f8fafc;
+    border-color: var(--border);
+  }
+  .session-badge.inactive .value {
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  /* ---- FORM FIELD ---- */
+  .field-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: block;
+  }
+  select, input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: #f8fafc;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    transition: border 0.2s;
+  }
+  select:focus, input:focus {
+    border-color: var(--primary);
+    background: #fff;
+  }
+  .select-wrapper {
+    position: relative;
+  }
+  .select-wrapper::after {
+    content: '⌄';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 16px;
+    pointer-events: none;
+  }
+
+  /* ---- CAMERA AREA ---- */
+  .camera-area {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    position: relative;
+    background: #f8fafc;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .camera-area video, .camera-area img {
+    width: 100%;
+    max-height: 260px;
+    object-fit: cover;
+    display: block;
+    border-radius: var(--radius-sm);
+  }
+  .camera-placeholder {
+    text-align: center;
+    padding: 30px;
+    color: var(--muted);
+  }
+  .camera-placeholder .icon { font-size: 36px; margin-bottom: 8px; }
+  .camera-placeholder p { font-size: 13px; }
+
+  /* ---- BUTTONS ---- */
+  .btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(30,58,138,0.3);
+  }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-secondary {
+    background: #f1f5f9;
+    color: var(--primary);
+    margin-top: 8px;
+  }
+  .btn-success {
+    background: var(--success);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(16,185,129,0.3);
+  }
+  .btn-danger {
+    background: var(--error);
+    color: #fff;
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ---- LOCATION ---- */
+  .location-info {
+    background: #f0fdf4;
+    border: 1.5px solid #bbf7d0;
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #065f46;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    display: none;
+  }
+  .location-info.visible { display: flex; }
+  .location-info .pin { font-size: 16px; flex-shrink: 0; }
+  .location-info .coords { font-weight: 600; }
+  .location-info .address { color: #047857; margin-top: 2px; }
+
+  /* ---- TOAST / ALERT ---- */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #1e293b;
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    z-index: 9999;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+    max-width: 90vw;
+    text-align: center;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { background: var(--success); }
+  .toast.error { background: var(--error); }
+
+  /* ---- LOADING OVERLAY ---- */
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30,58,138,0.6);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9998;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .loading-overlay.visible { display: flex; }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 4px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  .loading-overlay p { color: #fff; font-weight: 600; font-size: 15px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---- SUCCESS CARD ---- */
+  .success-card {
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    border: 2px solid #6ee7b7;
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    display: none;
+  }
+  .success-card.visible { display: block; }
+  .success-card .checkmark { font-size: 48px; margin-bottom: 8px; }
+  .success-card h3 { color: #065f46; font-size: 18px; font-weight: 800; }
+  .success-card p { color: #047857; font-size: 13px; margin-top: 4px; }
+  .success-card .meta { 
+    background: rgba(255,255,255,0.7); 
+    border-radius: 10px; 
+    padding: 12px; 
+    margin-top: 12px;
+    font-size: 12px;
+    color: #065f46;
+    text-align: left;
+  }
+  .success-card .meta div { margin-bottom: 4px; }
+  .success-card .meta span { font-weight: 700; }
+
+  /* ---- ADMIN PANEL ---- */
+  .admin-login { display: none; }
+  .admin-login.visible { display: block; }
+  .admin-dashboard { display: none; }
+  .admin-dashboard.visible { display: block; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .stat-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    margin: 0;
+  }
+  .stat-card .num { font-size: 28px; font-weight: 800; color: var(--primary); }
+  .stat-card .lbl { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+  .record-list { margin-top: 8px; }
+  .record-item {
+    background: #f8fafc;
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    border-left: 4px solid var(--primary);
+    font-size: 13px;
+  }
+  .record-item .name { font-weight: 700; color: var(--text); }
+  .record-item .meta { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .record-item .session-pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    float: right;
+  }
+  .session-pill.Pagi { background: #fef9c3; color: #854d0e; }
+  .session-pill.Siang { background: #fee2e2; color: #991b1b; }
+
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    align-items: center;
+  }
+  .filter-bar input[type="date"] {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .filter-bar .btn {
+    width: auto;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .gas-url-info {
+    background: #fffbeb;
+    border: 1.5px solid #fcd34d;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #92400e;
+    margin: 0 20px 16px;
+  }
+  .gas-url-info strong { display: block; margin-bottom: 4px; }
+  .gas-url-info input {
+    background: #fff;
+    border: 1px solid #fcd34d;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 12px;
+    margin-top: 6px;
+    font-family: monospace;
+  }
+
+  .divider {
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin: 4px 0 8px;
+    text-transform: uppercase;
+  }
+
+  canvas { display: none; }
+
+  @media (min-width: 481px) {
+    body { padding: 20px 20px 60px; }
+    .app-wrapper { border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(30,58,138,0.15); }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1 id="orgTitle">ABSENSI WFH</h1>
+    <p id="orgSubtitle">DEVELOP BY SDM</p>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('absen')">ABSEN</button>
+    <button class="tab-btn" onclick="switchTab('admin')">ADMIN</button>
+  </div>
+
+  <!-- GAS URL CONFIG -->
+  <div class="gas-url-info">
+    <strong>⚙️ Konfigurasi URL Apps Script</strong>
+    Tempel URL Web App Google Apps Script Anda di sini:
+    <input type="text" id="gasUrl" placeholder="https://script.google.com/macros/s/AKfycb.../exec" 
+           oninput="saveGasUrl()" />
+  </div>
+
+  <!-- ============ TAB ABSEN ============ -->
+  <div id="tab-absen">
+
+    <!-- Session Status -->
+    <div class="card" style="padding:16px">
+      <div id="sessionBadge" class="session-badge">
+        <div class="label">Status Sesi</div>
+        <div class="value" id="sessionValue">Memuat...</div>
+      </div>
+      <div style="text-align:center;margin-top:10px;font-size:12px;color:var(--muted)">
+        🕐 <span id="currentTime">--:--:--</span>
+      </div>
+    </div>
+
+    <!-- Form Absen -->
+    <div class="card" id="absenForm">
+      <label class="field-label">Nama Pegawai</label>
+      <div class="select-wrapper" style="margin-bottom:16px">
+        <select id="employeeSelect" onchange="onEmployeeChange()">
+          <option value="">-- Pilih Nama --</option>
+        </select>
+      </div>
+
+      <div class="divider">Foto Selfie</div>
+
+      <!-- Camera Area -->
+      <div class="camera-area" id="cameraArea">
+        <div class="camera-placeholder" id="cameraPlaceholder">
+          <div class="icon">📷</div>
+          <p>Tekan tombol untuk buka kamera</p>
+        </div>
+        <video id="videoEl" autoplay playsinline style="display:none"></video>
+        <img id="photoPreview" style="display:none" />
+      </div>
+      <canvas id="canvas"></canvas>
+
+      <button class="btn btn-primary" id="cameraBtn" onclick="handleCamera()" style="margin-top:12px">
+        📷 BUKA KAMERA DEVICE
+      </button>
+      <button class="btn btn-secondary" id="retakeBtn" onclick="retakePhoto()" style="display:none">
+        🔄 Ambil Ulang Foto
+      </button>
+
+      <div style="margin-top:16px">
+        <div class="divider">Lokasi GPS</div>
+        <button class="btn btn-secondary" onclick="getLocation()" id="locationBtn">
+          📍 Ambil Lokasi Sekarang
+        </button>
+        <div class="location-info" id="locationInfo">
+          <span class="pin">📍</span>
+          <div>
+            <div class="coords" id="coordsText"></div>
+            <div class="address" id="addressText"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px">
+        <button class="btn btn-success" onclick="submitAbsen()" id="submitBtn">
+          ✅ KIRIM ABSENSI
+        </button>
+      </div>
+    </div>
+
+    <!-- Success Card -->
+    <div class="card success-card" id="successCard">
+      <div class="checkmark">✅</div>
+      <h3>Absensi Berhasil!</h3>
+      <p id="successMsg">Data Anda telah tersimpan</p>
+      <div class="meta" id="successMeta"></div>
+      <button class="btn btn-primary" onclick="resetForm()" style="margin-top:16px">
+        Absen Lagi
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ============ TAB ADMIN ============ -->
+  <div id="tab-admin" style="display:none">
+
+    <!-- Login Admin -->
+    <div class="card admin-login visible" id="adminLoginCard">
+      <h3 style="font-size:18px;font-weight:800;margin-bottom:16px;color:var(--primary)">🔐 Login Admin</h3>
+      <label class="field-label">Password</label>
+      <input type="password" id="adminPass" placeholder="Masukkan password admin" onkeydown="if(event.key==='Enter')adminLogin()" />
+      <button class="btn btn-primary" onclick="adminLogin()" style="margin-top:12px">Masuk</button>
+    </div>
+
+    <!-- Dashboard Admin -->
+    <div id="adminDashboard" class="admin-dashboard">
+
+      <div class="stats-row" style="margin:0 20px 0">
+        <div class="stat-card">
+          <div class="num" id="statTotal">0</div>
+          <div class="lbl">Total Absen Hari Ini</div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="statPagi">0</div>
+          <div class="lbl">Sesi Pagi</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="filter-bar">
+          <input type="date" id="filterDate" value="" />
+          <button class="btn btn-primary" onclick="loadRecords()">Filter</button>
+          <button class="btn btn-secondary" style="width:auto;padding:10px 14px" onclick="exportCSV()">📥 CSV</button>
+        </div>
+        <div class="record-list" id="recordList">
+          <p style="color:var(--muted);text-align:center;padding:20px;font-size:13px">Tekan Filter untuk memuat data</p>
+        </div>
+      </div>
+
+      <div style="margin:0 20px 16px">
+        <button class="btn btn-danger" onclick="adminLogout()">Keluar</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Loading -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p id="loadingMsg">Memproses...</p>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const SESSIONS = {
+  Pagi:  { start: '07:30', end: '09:30' },
+  Siang: { start: '13:30', end: '15:30' },
+};
+
+let currentSession = null;
+let capturedPhoto = null;  // base64
+let capturedLocation = null;
+let mediaStream = null;
+let isCameraActive = false;
+let adminLoggedIn = false;
+let allRecords = [];
+let employees = [];
+
+// ============================================================
+// INIT
+// ============================================================
+window.onload = () => {
+  // Load saved GAS URL
+  const savedUrl = localStorage.getItem('gasUrl') || '';
+  document.getElementById('gasUrl').value = savedUrl;
+
+  updateClock();
+  setInterval(updateClock, 1000);
+  detectSession();
+  setInterval(detectSession, 60000);
+
+  // Set today's date for filter
+  document.getElementById('filterDate').value = getTodayDate();
+
+  loadEmployees();
+};
+
+// ============================================================
+// UTILS
+// ============================================================
+function saveGasUrl() {
+  const url = document.getElementById('gasUrl').value.trim();
+  localStorage.setItem('gasUrl', url);
+}
+
+function getGasUrl() {
+  return document.getElementById('gasUrl').value.trim();
+}
+
+function getTodayDate() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function formatTime(date) {
+  return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+}
+
+function timeToMinutes(t) {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
+
+function updateClock() {
+  document.getElementById('currentTime').textContent = formatTime(new Date());
+}
+
+function detectSession() {
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const badge = document.getElementById('sessionBadge');
+  const val = document.getElementById('sessionValue');
+  
+  currentSession = null;
+  for (const [name, s] of Object.entries(SESSIONS)) {
+    const start = timeToMinutes(s.start);
+    const end = timeToMinutes(s.end);
+    if (nowMin >= start && nowMin <= end) {
+      currentSession = name;
+      break;
+    }
+  }
+
+  if (currentSession) {
+    badge.classList.remove('inactive');
+    val.textContent = `${currentSession} (${SESSIONS[currentSession].start} - ${SESSIONS[currentSession].end})`;
+  } else {
+    badge.classList.add('inactive');
+    // Cari sesi berikutnya
+    let nextSession = null;
+    let minDiff = Infinity;
+    for (const [name, s] of Object.entries(SESSIONS)) {
+      const start = timeToMinutes(s.start);
+      if (start > nowMin && start - nowMin < minDiff) {
+        minDiff = start - nowMin;
+        nextSession = { name, time: s.start };
+      }
+    }
+    if (nextSession) {
+      val.textContent = `Di luar sesi absensi\nBerikutnya: ${nextSession.name} (${nextSession.time})`;
+    } else {
+      val.textContent = 'Sesi absensi hari ini telah selesai';
+    }
+  }
+}
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function showLoading(msg = 'Memproses...') {
+  document.getElementById('loadingMsg').textContent = msg;
+  document.getElementById('loadingOverlay').classList.add('visible');
+}
+
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('visible');
+}
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && tab === 'absen') || (i === 1 && tab === 'admin'));
+  });
+  document.getElementById('tab-absen').style.display = tab === 'absen' ? 'block' : 'none';
+  document.getElementById('tab-admin').style.display = tab === 'admin' ? 'block' : 'none';
+}
+
+// ============================================================
+// LOAD EMPLOYEES
+// ============================================================
+async function loadEmployees() {
+  const url = getGasUrl();
+  if (!url) {
+    // Fallback: sample employees untuk demo
+    employees = [
+      { id: '001', name: 'Ahmad Fauzi', division: 'WFH', position: 'Staff' },
+      { id: '002', name: 'Budi Santoso', division: 'WFH', position: 'Staff' },
+      { id: '003', name: 'Citra Dewi', division: 'WFH', position: 'Staff' },
+    ];
+    populateEmployeeSelect();
+    return;
+  }
+
+  try {
+    const res = await fetch(url + '?action=getEmployees');
+    const data = await res.json();
+    if (data.success) {
+      employees = data.employees;
+      populateEmployeeSelect();
+    }
+  } catch (e) {
+    console.warn('Gagal load pegawai dari GAS, pakai data demo');
+    employees = [];
+    populateEmployeeSelect();
+  }
+}
+
+function populateEmployeeSelect() {
+  const sel = document.getElementById('employeeSelect');
+  sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
+  employees.forEach(emp => {
+    const opt = document.createElement('option');
+    opt.value = emp.id;
+    opt.textContent = emp.name;
+    opt.dataset.name = emp.name;
+    opt.dataset.division = emp.division;
+    opt.dataset.position = emp.position;
+    sel.appendChild(opt);
+  });
+}
+
+function onEmployeeChange() {
+  // Reset jika ganti pegawai
+}
+
+// ============================================================
+// CAMERA
+// ============================================================
+async function handleCamera() {
+  if (isCameraActive) {
+    // Ambil foto
+    capturePhoto();
+  } else {
+    // Buka kamera
+    try {
+      mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
+      });
+      const video = document.getElementById('videoEl');
+      video.srcObject = mediaStream;
+      video.style.display = 'block';
+      document.getElementById('cameraPlaceholder').style.display = 'none';
+      document.getElementById('cameraBtn').innerHTML = '📸 AMBIL FOTO';
+      document.getElementById('cameraBtn').classList.add('btn-success');
+      document.getElementById('cameraBtn').classList.remove('btn-primary');
+      isCameraActive = true;
+    } catch (e) {
+      showToast('Gagal membuka kamera: ' + e.message, 'error');
+    }
+  }
+}
+
+function capturePhoto() {
+  const video = document.getElementById('videoEl');
+  const canvas = document.getElementById('canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0);
+  capturedPhoto = canvas.toDataURL('image/jpeg', 0.85);
+
+  // Stop stream
+  if (mediaStream) {
+    mediaStream.getTracks().forEach(t => t.stop());
+    mediaStream = null;
+  }
+  isCameraActive = false;
+
+  // Show preview
+  const preview = document.getElementById('photoPreview');
+  preview.src = capturedPhoto;
+  preview.style.display = 'block';
+  video.style.display = 'none';
+
+  document.getElementById('cameraBtn').style.display = 'none';
+  document.getElementById('retakeBtn').style.display = 'block';
+  showToast('Foto berhasil diambil! ✅', 'success');
+}
+
+function retakePhoto() {
+  capturedPhoto = null;
+  const preview = document.getElementById('photoPreview');
+  preview.style.display = 'none';
+  document.getElementById('cameraPlaceholder').style.display = 'flex';
+  document.getElementById('cameraBtn').style.display = 'block';
+  document.getElementById('cameraBtn').innerHTML = '📷 BUKA KAMERA DEVICE';
+  document.getElementById('cameraBtn').className = 'btn btn-primary';
+  document.getElementById('retakeBtn').style.display = 'none';
+}
+
+// ============================================================
+// LOCATION
+// ============================================================
+function getLocation() {
+  const btn = document.getElementById('locationBtn');
+  btn.textContent = '⏳ Mengambil lokasi...';
+  btn.disabled = true;
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      capturedLocation = { latitude: lat, longitude: lng, address: '' };
+
+      document.getElementById('coordsText').textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+      document.getElementById('addressText').textContent = 'Mengambil alamat...';
+      document.getElementById('locationInfo').classList.add('visible');
+
+      btn.textContent = '✅ Lokasi Didapat';
+      btn.style.background = '#d1fae5';
+      btn.style.color = '#065f46';
+      btn.disabled = false;
+
+      // Reverse geocode
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+        const geo = await res.json();
+        const addr = geo.display_name || `${lat}, ${lng}`;
+        capturedLocation.address = addr;
+        document.getElementById('addressText').textContent = addr;
+      } catch {
+        capturedLocation.address = `${lat}, ${lng}`;
+        document.getElementById('addressText').textContent = `${lat}, ${lng}`;
+      }
+    },
+    (err) => {
+      showToast('Gagal mendapatkan lokasi: ' + err.message, 'error');
+      btn.textContent = '📍 Ambil Lokasi Sekarang';
+      btn.disabled = false;
+    },
+    { enableHighAccuracy: true, timeout: 15000 }
+  );
+}
+
+// ============================================================
+// SUBMIT ABSENSI
+// ============================================================
+async function submitAbsen() {
+  const sel = document.getElementById('employeeSelect');
+  const selectedOpt = sel.options[sel.selectedIndex];
+
+  // Validasi
+  if (!sel.value) { showToast('Pilih nama pegawai terlebih dahulu!', 'error'); return; }
+  if (!capturedPhoto) { showToast('Ambil foto selfie terlebih dahulu!', 'error'); return; }
+  if (!capturedLocation) { showToast('Ambil lokasi GPS terlebih dahulu!', 'error'); return; }
+
+  const url = getGasUrl();
+  if (!url) {
+    showToast('⚠️ Masukkan URL Apps Script terlebih dahulu!', 'error');
+    return;
+  }
+
+  const session = currentSession || detectCurrentSessionManual();
+
+  const payload = {
+    action: 'submitAbsen',
+    employeeId: sel.value,
+    employeeName: selectedOpt.dataset.name || selectedOpt.textContent,
+    division: selectedOpt.dataset.division || 'WFH',
+    position: selectedOpt.dataset.position || 'Staff',
+    session: session,
+    photoBase64: capturedPhoto,
+    latitude: capturedLocation.latitude,
+    longitude: capturedLocation.longitude,
+    address: capturedLocation.address,
+  };
+
+  showLoading('Mengirim data absensi...');
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    hideLoading();
+
+    if (data.success) {
+      // Tampilkan success card
+      document.getElementById('absenForm').style.display = 'none';
+      const sc = document.getElementById('successCard');
+      sc.classList.add('visible');
+      document.getElementById('successMsg').textContent = data.message;
+      document.getElementById('successMeta').innerHTML = `
+        <div>👤 <span>${payload.employeeName}</span></div>
+        <div>📅 <span>${getTodayDate()}</span> | 🕐 <span>${session}</span></div>
+        <div>📍 <span>${capturedLocation.latitude.toFixed(5)}, ${capturedLocation.longitude.toFixed(5)}</span></div>
+        <div>🔑 Record ID: <span>${data.recordId || '-'}</span></div>
+        <div>⏰ <span>${data.timestamp || new Date().toLocaleString('id-ID')}</span></div>
+      `;
+    } else {
+      showToast(data.message || 'Gagal menyimpan absensi', 'error');
+    }
+  } catch (err) {
+    hideLoading();
+    showToast('Error: ' + err.message, 'error');
+  }
+}
+
+function detectCurrentSessionManual() {
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  for (const [name, s] of Object.entries(SESSIONS)) {
+    if (nowMin >= timeToMinutes(s.start) && nowMin <= timeToMinutes(s.end)) return name;
+  }
+  return 'Manual';
+}
+
+function resetForm() {
+  document.getElementById('absenForm').style.display = 'block';
+  document.getElementById('successCard').classList.remove('visible');
+  capturedPhoto = null;
+  capturedLocation = null;
+  retakePhoto();
+  document.getElementById('locationInfo').classList.remove('visible');
+  document.getElementById('locationBtn').textContent = '📍 Ambil Lokasi Sekarang';
+  document.getElementById('locationBtn').disabled = false;
+  document.getElementById('locationBtn').style = '';
+  document.getElementById('employeeSelect').value = '';
+}
+
+// ============================================================
+// ADMIN
+// ============================================================
+async function adminLogin() {
+  const pass = document.getElementById('adminPass').value;
+  const url = getGasUrl();
+
+  if (!pass) { showToast('Masukkan password', 'error'); return; }
+
+  if (!url) {
+    // Demo mode
+    if (pass === 'kpu123') {
+      adminLoggedIn = true;
+      document.getElementById('adminLoginCard').classList.remove('visible');
+      document.getElementById('adminDashboard').classList.add('visible');
+      loadRecords();
+    } else {
+      showToast('Password salah', 'error');
+    }
+    return;
+  }
+
+  showLoading('Memverifikasi...');
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'adminLogin', password: pass })
+    });
+    const data = await res.json();
+    hideLoading();
+
+    if (data.success) {
+      adminLoggedIn = true;
+      document.getElementById('adminLoginCard').classList.remove('visible');
+      document.getElementById('adminDashboard').classList.add('visible');
+      loadRecords();
+    } else {
+      showToast(data.message, 'error');
+    }
+  } catch {
+    hideLoading();
+    showToast('Gagal terhubung ke server', 'error');
+  }
+}
+
+async function loadRecords() {
+  const filterDate = document.getElementById('filterDate').value || getTodayDate();
+  const url = getGasUrl();
+
+  if (!url) {
+    showToast('Masukkan URL Apps Script', 'error');
+    return;
+  }
+
+  showLoading('Memuat data rekap...');
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'getAttendanceRecords', password: 'kpu123', filterDate })
+    });
+    const data = await res.json();
+    hideLoading();
+
+    if (data.success) {
+      allRecords = data.records || [];
+      renderRecords(allRecords);
+    } else {
+      showToast(data.message, 'error');
+    }
+  } catch (e) {
+    hideLoading();
+    showToast('Gagal memuat data: ' + e.message, 'error');
+  }
+}
+
+function renderRecords(records) {
+  const list = document.getElementById('recordList');
+  const pagi = records.filter(r => r['Session'] === 'Pagi').length;
+  const siang = records.filter(r => r['Session'] === 'Siang').length;
+  
+  document.getElementById('statTotal').textContent = records.length;
+  document.getElementById('statPagi').textContent = pagi;
+
+  if (!records.length) {
+    list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:20px;font-size:13px">Tidak ada data absensi</p>';
+    return;
+  }
+
+  list.innerHTML = records.map(r => `
+    <div class="record-item">
+      <span class="session-pill ${r['Session'] || ''}">${r['Session'] || '-'}</span>
+      <div class="name">${r['Full Name'] || '-'}</div>
+      <div class="meta">
+        📅 ${r['Date'] || '-'} | ⏰ ${r['Submission Timestamp'] || '-'}
+      </div>
+      <div class="meta">📍 ${r['Latitude'] ? r['Latitude'].toString().substring(0,10) : '-'}, ${r['Longitude'] ? r['Longitude'].toString().substring(0,10) : '-'}</div>
+      ${r['Photo URL'] ? `<div class="meta"><a href="${r['Photo URL']}" target="_blank" style="color:var(--primary)">📷 Lihat Foto</a></div>` : ''}
+    </div>
+  `).join('');
+}
+
+function exportCSV() {
+  if (!allRecords.length) { showToast('Tidak ada data untuk diekspor', 'error'); return; }
+  const keys = Object.keys(allRecords[0]);
+  const csv = [keys.join(','), ...allRecords.map(r => keys.map(k => `"${r[k] || ''}"`).join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `absensi_${document.getElementById('filterDate').value}.csv`;
+  a.click();
+}
+
+function adminLogout() {
+  adminLoggedIn = false;
+  document.getElementById('adminLoginCard').classList.add('visible');
+  document.getElementById('adminDashboard').classList.remove('visible');
+  document.getElementById('adminPass').value = '';
+}
+</script>
+</body>
+</html>
