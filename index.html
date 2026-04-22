@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Absensi WFH</title>
+<title>Absensi WFH KPU Kabupaten Dairi</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -470,12 +470,12 @@
   </div>
 
   <!-- GAS URL CONFIG -->
-  <div class="gas-url-info">
+  <!-- <div class="gas-url-info">
     <strong>⚙️ Konfigurasi URL Apps Script</strong>
     Tempel URL Web App Google Apps Script Anda di sini:
     <input type="text" id="gasUrl" placeholder="https://script.google.com/macros/s/AKfycbytSis6H-udS1ig12Bv3KYKuiJNXhSgnALXVAtA0fBvFYWMa_fQnL3qN6JAZeyBQvJcbw/exec" 
            oninput="saveGasUrl()" />
-  </div>
+  </div> -->
 
   <!-- ============ TAB ABSEN ============ -->
   <div id="tab-absen">
@@ -648,13 +648,13 @@ window.onload = () => {
 // ============================================================
 // UTILS
 // ============================================================
-function saveGasUrl() {
-  const url = document.getElementById('gasUrl').value.trim();
-  localStorage.setItem('gasUrl', url);
-}
+// function saveGasUrl() {
+//   const url = document.getElementById('gasUrl').value.trim();
+//   localStorage.setItem('gasUrl', url);
+// }
 
 function getGasUrl() {
-  return document.getElementById('gasUrl').value.trim();
+  return "https://script.google.com/macros/s/AKfycbytSis6H-udS1ig12Bv3KYKuiJNXhSgnALXVAtA0fBvFYWMa_fQnL3qN6JAZeyBQvJcbw/exec";
 }
 
 function getTodayDate() {
